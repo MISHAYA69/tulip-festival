@@ -4,11 +4,18 @@ const bcrypt = require('bcryptjs');
 
 class Database {
     constructor() {
-        this.db = new sqlite3.Database('./festival.db', (err) => {
+        // Определяем путь к файлу базы данных:
+        // - На Amvera (при наличии смонтированной папки /data) используем /data/festival.db
+        // - Локально – создаём файл в текущей директории
+        const dbPath = process.env.AMVERA_MOUNT_PATH 
+            ? path.join(process.env.AMVERA_MOUNT_PATH, 'festival.db')
+            : './festival.db';
+        
+        this.db = new sqlite3.Database(dbPath, (err) => {
             if (err) {
                 console.error('Ошибка подключения к БД:', err.message);
             } else {
-                console.log('Подключение к SQLite базе данных установлено');
+                console.log(`Подключение к SQLite базе данных установлено (${dbPath})`);
                 this.initDatabase();
             }
         });
