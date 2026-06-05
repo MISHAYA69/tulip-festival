@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бронирование - Фестиваль Тюльпанов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Все стили остаются без изменений (из исходного файла) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #e91e63;
+            --secondary-color: #9c27b0;
+            --accent-color: #ff9800;
+            --light-color: #f8f9fa;
+            --dark-color: #333;
+            --success-color: #4caf50;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        nav {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: white;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover::after {
+            width: 70%;
+        }
+
+        /* Стили для кнопок авторизации */
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .btn-login {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-login:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+        .user-info {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            display: none;
+        }
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        main {
+            min-height: calc(100vh - 160px);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://artflora.ru/sites/default/files/inline/images/snimok_ekrana_2025-02-19_v_19.02.19.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23ffffff' fill-opacity='0.1' d='M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+            background-size: cover;
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1.5s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #ff8c00;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        footer {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            padding: 40px 0 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-5px);
+            color: var(--accent-color);
+        }
+
+        .copyright {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Стили для страницы бронирования */
+        .booking-section {
+            padding: 80px 0;
+            background-color: white;
+        }
+
+        .booking-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .event-summary {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .event-summary h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .event-details {
+            margin-bottom: 20px;
+        }
+
+        .event-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .event-detail span:first-child {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .event-detail span:last-child {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .booking-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .total-price {
+            background: var(--success-color);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 25px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+
+        .btn-success:hover {
+            background-color: #45a049;
+        }
+
+        .booking-result {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .event-selection {
+            margin-bottom: 30px;
+        }
+
+        .event-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .event-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .event-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-card.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.2);
+        }
+
+        .event-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .event-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .event-card-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--success-color);
+        }
+
+        .event-card-date {
+            color: var(--dark-color);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .event-card-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .event-card-capacity {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .available-tickets {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+
+        .no-events i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        /* Стили для индикатора загрузки */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            .hero p {
+                font-size: 1.1rem;
+            }
+            .booking-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .event-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <div>Обработка запроса...</div>
+    </div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-tulip"></i>
+                    <h1>Фестиваль Тюльпанов</h1>
+                </div>
+                <nav>
+                    <a href="/">Главная</a>
+                    <a href="/events">Мероприятия</a>
+                    <a href="/booking">Бронирование</a>
+                    <a href="/my-bookings">Мои бронирования</a>
+                    <a href="/admin">Админка</a>
+                    <div class="auth-buttons">
+                        <a href="/login" class="btn-login" id="login-btn">
+                            <i class="fas fa-sign-in-alt"></i> Вход
+                        </a>
+                        <div class="user-info" id="user-info">
+                            <span id="username"></span>
+                            <button class="logout-btn" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i> Выйти
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Бронирование билетов</h2>
+                <p>Выберите мероприятие и забронируйте участие</p>
+            </div>
+        </section>
+
+        <section class="booking-section">
+            <div class="container">
+                <h2 class="section-title">Оформление заказа</h2>
+
+                <div class="booking-container">
+                    <div class="event-selection">
+                        <h3 style="color: var(--primary-color); margin-bottom: 20px;">Выберите мероприятие</h3>
+                        <div class="event-cards" id="event-cards">
+                            <div class="no-events">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Загрузка мероприятий...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="booking-form" id="booking-form-container">
+                        <div class="event-summary" id="event-summary">
+                            <h3>Информация о мероприятии</h3>
+                            <div class="event-details">
+                                <div class="event-detail">
+                                    <span>Мероприятие:</span>
+                                    <span id="event-title">Выберите мероприятие</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>Дата и время:</span>
+                                    <span id="event-datetime">-</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>Цена за билет:</span>
+                                    <span id="event-price">-</span>
+                                </div>
+                                <div class="event-detail">
+                                    <span>Доступно билетов:</span>
+                                    <span id="event-available">-</span>
+                                </div>
+                            </div>
+                            <p style="color: #666; font-style: italic;">Для бронирования выберите мероприятие и заполните форму</p>
+                        </div>
+
+                        <form id="booking-form" style="display: none;">
+                            <div class="form-group">
+                                <label for="name">Имя и Фамилия *</label>
+                                <input type="text" id="name" name="name" required placeholder="Иван Иванов">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" name="email" required placeholder="ivan@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Телефон</label>
+                                    <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tickets">Количество билетов *</label>
+                                <select id="tickets" name="tickets" required>
+                                    <option value="">Выберите количество</option>
+                                    <option value="1">1 билет</option>
+                                    <option value="2">2 билета</option>
+                                    <option value="3">3 билета</option>
+                                    <option value="4">4 билета</option>
+                                    <option value="5">5 билетов</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="comment">Комментарий (необязательно)</label>
+                                <input type="text" id="comment" name="comment" placeholder="Особые пожелания...">
+                            </div>
+
+                            <div class="total-price">
+                                Итого: <span id="total-amount">0</span> руб.
+                            </div>
+
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-ticket-alt"></i> Забронировать билеты
+                            </button>
+
+                            <div class="error-message" id="error-message"></div>
+                        </form>
+
+                        <div class="booking-result" id="booking-result">
+                            <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                            <h3>Бронирование создано!</h3>
+                            <p>Номер вашего заказа: <strong id="booking-id"></strong></p>
+                            <p>Вы будете перенаправлены на страницу оплаты...</p>
+                            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+                                <button class="btn btn-outline" onclick="window.location.href='/events'">
+                                    <i class="fas fa-calendar-alt"></i> Еще мероприятия
+                                </button>
+                                <button class="btn" onclick="window.location.href='/my-bookings'" style="background-color: var(--primary-color);">
+                                    <i class="fas fa-ticket-alt"></i> Мои бронирования
+                                </button>
+                                <button class="btn btn-outline" onclick="window.location.href='/'">
+                                    <i class="fas fa-home"></i> На главную
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <i class="fas fa-tulip"></i>
+                </div>
+                <p class="copyright">© Фестиваль Тюльпанов. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let selectedEvent = null;
+        let allEvents = [];
+        let currentUser = null;
+        let autoSelectDone = false;
+
+        // Функция для отображения/скрытия лоадера
+        function showLoading(show) {
+            const overlay = document.getElementById('loading-overlay');
+            if (show) overlay.classList.add('active');
+            else overlay.classList.remove('active');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
+        }
+
+        async function loadEvents() {
+            try {
+                const response = await fetch('/api/events');
+                allEvents = await response.json();
+                displayEvents(allEvents);
+                // После загрузки мероприятий проверим, нужно ли автоматически выбрать мероприятие из URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const eventIdFromUrl = urlParams.get('event');
+                if (eventIdFromUrl && !autoSelectDone) {
+                    const eventToSelect = allEvents.find(e => e.id == eventIdFromUrl);
+                    if (eventToSelect) {
+                        setTimeout(() => selectEvent(eventToSelect.id), 100);
+                        autoSelectDone = true;
+                    } else {
+                        showError('Мероприятие не найдено. Пожалуйста, выберите из списка.');
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки мероприятий:', error);
+                displayEvents([]);
+            }
+        }
+
+        function displayEvents(events) {
+            const eventsContainer = document.getElementById('event-cards');
+            if (events.length === 0) {
+                eventsContainer.innerHTML = `<div class="no-events"><i class="fas fa-calendar-times"></i><p>Нет доступных мероприятий</p></div>`;
+                return;
+            }
+            eventsContainer.innerHTML = events.map(event => `
+                <div class="event-card" onclick="selectEvent(${event.id})" data-event-id="${event.id}">
+                    <div class="event-card-header">
+                        <div>
+                            <div class="event-card-title">${escapeHtml(event.title)}</div>
+                            <div class="event-card-date"><i class="far fa-calendar"></i> ${formatDate(event.date)} в ${event.time}</div>
+                        </div>
+                        <div class="event-card-price">${event.price} руб.</div>
+                    </div>
+                    <div class="event-card-description">${escapeHtml(event.description || 'Описание отсутствует')}</div>
+                    <div class="event-card-capacity">
+                        <span>Вместимость: ${event.capacity} чел.</span>
+                        <span class="available-tickets">Доступно: ${event.available_tickets} билетов</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectEvent(eventId) {
+            document.querySelectorAll('.event-card').forEach(card => card.classList.remove('selected'));
+            const selectedCard = document.querySelector(`[data-event-id="${eventId}"]`);
+            if (selectedCard) selectedCard.classList.add('selected');
+            selectedEvent = allEvents.find(event => event.id === eventId);
+            if (selectedEvent) {
+                displayEventDetails(selectedEvent);
+                document.getElementById('booking-form').style.display = 'block';
+                updateTicketOptions(selectedEvent.available_tickets);
+                document.getElementById('booking-form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function displayEventDetails(event) {
+            document.getElementById('event-title').textContent = event.title;
+            document.getElementById('event-datetime').textContent = `${formatDate(event.date)} в ${event.time}`;
+            document.getElementById('event-price').textContent = `${event.price} руб.`;
+            document.getElementById('event-price').dataset.price = event.price;
+            document.getElementById('event-available').textContent = `${event.available_tickets} билетов`;
+            updateTotalPrice();
+        }
+
+        function updateTicketOptions(maxTickets) {
+            const ticketsSelect = document.getElementById('tickets');
+            const currentValue = ticketsSelect.value;
+            ticketsSelect.innerHTML = '<option value="">Выберите количество</option>';
+            for (let i = 1; i <= Math.min(maxTickets, 5); i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i + ' ' + getTicketWord(i);
+                ticketsSelect.appendChild(option);
+            }
+            if (currentValue && parseInt(currentValue) <= maxTickets) ticketsSelect.value = currentValue;
+            updateTotalPrice();
+        }
+
+        function getTicketWord(count) {
+            if (count === 1) return 'билет';
+            if (count >= 2 && count <= 4) return 'билета';
+            return 'билетов';
+        }
+
+        function updateTotalPrice() {
+            if (!selectedEvent) return;
+            const ticketPrice = parseInt(document.getElementById('event-price').dataset.price) || 0;
+            const ticketCount = parseInt(document.getElementById('tickets').value) || 0;
+            document.getElementById('total-amount').textContent = ticketPrice * ticketCount;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+        }
+
+        // ==================== АВТОРИЗАЦИЯ ====================
+        async function checkAuthAndPrefill() {
+            try {
+                const response = await fetch('/api/user');
+                const data = await response.json();
+                currentUser = data.user;
+                
+                // Обновляем навигацию
+                const loginBtn = document.getElementById('login-btn');
+                const userInfo = document.getElementById('user-info');
+                const usernameSpan = document.getElementById('username');
+                const myBookingsLink = document.querySelector('a[href="/my-bookings"]');
+                const adminLink = document.querySelector('a[href="/admin"]');
+                
+                if (currentUser) {
+                    loginBtn.style.display = 'none';
+                    userInfo.style.display = 'flex';
+                    usernameSpan.textContent = currentUser.username;
+                    if (myBookingsLink) myBookingsLink.style.display = 'block';
+                    if (adminLink) adminLink.style.display = (currentUser.role === 'admin' || currentUser.role === 'manager') ? 'block' : 'none';
+                    document.getElementById('name').value = currentUser.username;
+                    document.getElementById('email').value = currentUser.email;
+                } else {
+                    loginBtn.style.display = 'flex';
+                    userInfo.style.display = 'none';
+                    if (myBookingsLink) myBookingsLink.style.display = 'none';
+                    if (adminLink) adminLink.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Ошибка проверки авторизации:', error);
+            }
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) window.location.href = '/';
+            } catch (error) {
+                console.error('Ошибка выхода:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // Обработка отправки формы бронирования
+        document.getElementById('booking-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!selectedEvent) {
+                showError('Пожалуйста, выберите мероприятие');
+                return;
+            }
+            if (!currentUser) {
+                showError('Для бронирования необходимо войти в систему. Перенаправляем на страницу входа...');
+                setTimeout(() => window.location.href = '/login', 2000);
+                return;
+            }
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                tickets: document.getElementById('tickets').value,
+                comment: document.getElementById('comment').value,
+                eventId: selectedEvent.id
+            };
+            if (parseInt(formData.tickets) > selectedEvent.available_tickets) {
+                showError('Недостаточно доступных билетов. Пожалуйста, выберите меньшее количество.');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const bookingResponse = await fetch('/api/booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const bookingResult = await bookingResponse.json();
+                if (!bookingResult.success) {
+                    throw new Error(bookingResult.error || 'Ошибка создания бронирования');
+                }
+                const bookingCode = bookingResult.bookingId;
+
+                const paymentResponse = await fetch('/api/create-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ bookingCode: bookingCode })
+                });
+                const paymentResult = await paymentResponse.json();
+                if (!paymentResult.confirmationUrl) {
+                    throw new Error(paymentResult.error || 'Ошибка создания платежа');
+                }
+
+                document.getElementById('booking-form').style.display = 'none';
+                document.getElementById('booking-id').textContent = bookingCode;
+                document.getElementById('booking-result').style.display = 'block';
+                
+                setTimeout(() => {
+                    window.location.href = paymentResult.confirmationUrl;
+                }, 1500);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showError(error.message || 'Ошибка соединения с сервером');
+                showLoading(false);
+            }
+        });
+
+        // Инициализация страницы
+        document.addEventListener('DOMContentLoaded', async function () {
+            await checkAuthAndPrefill();
+            await loadEvents();
+            document.getElementById('tickets').addEventListener('change', updateTotalPrice);
+        });
+    </script>
+</body>
+</html>
