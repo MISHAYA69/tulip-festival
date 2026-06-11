@@ -1,7 +1,0 @@
-6. Установка и запуск
-npm install express express-session sqlite3 bcryptjs
-npm install --save-dev nodemon
-npm run init-db
-npm run dev
-
-Тестового администратора (admin/admin123)
